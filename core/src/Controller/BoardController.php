@@ -2,10 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Board;
 use App\Repository\BoardRepository;
+use App\Service\Board\BoardCreator;
 use App\Utilities\ResponseTrait;
 use App\Utilities\SerializationTrait;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -55,5 +60,21 @@ class BoardController extends AbstractController
         $response = $this->serialize($board, 'json', ['board.single']);
 
         return $this->createSuccessResponse($response);
+    }
+
+    /**
+     * @Route("/create", name="create", methods={"POST"})
+     * @param Request $request
+     * @param BoardCreator $boardCreator
+     * @return JsonResponse
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function createBoard(Request $request, BoardCreator $boardCreator)
+    {
+        $board = $this->deserialize($request->getContent(), Board::class, 'json');
+        $response = $boardCreator->create($board);
+
+        return $this->json($response, 200);
     }
 }
