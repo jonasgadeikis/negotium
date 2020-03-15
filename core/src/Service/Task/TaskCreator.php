@@ -3,6 +3,7 @@
 namespace App\Service\Task;
 
 use App\Entity\Task;
+use App\Entity\User;
 use App\Repository\BoardRepository;
 use App\Repository\TaskRepository;
 use DateTime;
@@ -36,12 +37,14 @@ class TaskCreator
 
     /**
      * @param Task $task
+     * @param User $user
      * @return array
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function create(Task $task)
+    public function create(Task $task, User $user)
     {
+        $task->setUser($user);
         $task->setBoard($this->boardRepository->find($task->getBoard()->getId()));
         $task->setCreatedAt(new DateTime());
 

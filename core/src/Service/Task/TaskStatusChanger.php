@@ -7,6 +7,10 @@ use App\Repository\TaskRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 
+/**
+ * Class TaskStatusChanger
+ * @package App\Service\Task
+ */
 class TaskStatusChanger
 {
     /**

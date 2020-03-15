@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Task;
+use App\Entity\User;
 use App\Repository\TaskRepository;
 use App\Service\Task\TaskStatusChanger;
 use App\Utilities\ResponseTrait;
@@ -56,7 +57,12 @@ class TaskController extends AbstractController
      */
     public function getSingleTask(Request $request, TaskRepository $taskRepository)
     {
-        $task = $taskRepository->findTaskById($request->attributes->get('id'));
+        $user = $this->getUser();
+
+        $task = $taskRepository->findTaskById(
+            $request->attributes->get('id'),
+            $user->getId()
+        );
 
         if (!$task) {
             return $this->createNotFoundResponse();
@@ -77,8 +83,11 @@ class TaskController extends AbstractController
      */
     public function createTask(Request $request, TaskCreator $taskCreator)
     {
+        $user = $this->getUser();
         $task = $this->deserialize($request->getContent(), Task::class, 'json');
-        $response = $taskCreator->create($task);
+
+        /** @var User $user */
+        $response = $taskCreator->create($task, $user);
 
         return $this->json($response, 200);
     }

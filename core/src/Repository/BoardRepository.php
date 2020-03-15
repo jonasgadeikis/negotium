@@ -22,24 +22,27 @@ class BoardRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param $id
      * @return Board[]
      */
-    public function findAllBoards()
+    public function findAllBoardsByUserId($id)
     {
-        // TODO: Later by given User id (findAllBoardsByUserId)
-
-        $boards = $this->findAll();
+        $boards = $this->findBy(['user' => $id]);
 
         return $boards;
     }
 
     /**
-     * @param $id
-     * @return Board|null
+     * @param $boardId
+     * @param $userId
+     * @return Board
      */
-    public function findBoardById($id)
+    public function findBoardById($boardId, $userId)
     {
-        $board = $this->find($id);
+        $board = $this->findOneBy([
+            'id' => $boardId,
+            'user' => $userId
+        ]);
 
         return $board;
     }
