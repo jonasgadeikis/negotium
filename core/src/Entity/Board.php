@@ -44,6 +44,16 @@ class Board
     private $tasks;
 
     /**
+     * @JMS\Exclude()
+     *
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="boards")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     *
+     * @var User
+     */
+    private $user;
+
+    /**
      * @return int|null
      */
     public function getId(): ?int
@@ -84,5 +94,21 @@ class Board
     public function setTasks($tasks): void
     {
         $this->tasks = $tasks;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param mixed $user
+     */
+    public function setUser($user): void
+    {
+        $this->user = $user;
     }
 }

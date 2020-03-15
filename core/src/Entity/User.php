@@ -2,8 +2,10 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use JMS\Serializer\Annotation as JMS;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -19,6 +21,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @JMS\Type("string")
      */
     private $email;
 
@@ -30,8 +33,23 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @JMS\Type("string")
      */
     private $password;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Board", mappedBy="user", fetch="EAGER")
+     *
+     * @var Board[]|ArrayCollection
+     */
+    private $boards;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Task", mappedBy="user", fetch="EAGER")
+     *
+     * @var Task[]|ArrayCollection
+     */
+    private $tasks;
 
     public function getId(): ?int
     {
@@ -109,5 +127,37 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBoards()
+    {
+        return $this->boards;
+    }
+
+    /**
+     * @param mixed $boards
+     */
+    public function setBoards($boards): void
+    {
+        $this->boards = $boards;
+    }
+
+    /**
+     * @return Task[]|ArrayCollection
+     */
+    public function getTasks()
+    {
+        return $this->tasks;
+    }
+
+    /**
+     * @param Task[]|ArrayCollection $tasks
+     */
+    public function setTasks($tasks): void
+    {
+        $this->tasks = $tasks;
     }
 }

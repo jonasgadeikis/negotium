@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Board;
+use App\Entity\User;
 use App\Repository\BoardRepository;
 use App\Service\Board\BoardCreator;
 use App\Utilities\ResponseTrait;
@@ -32,7 +33,9 @@ class BoardController extends AbstractController
      */
     public function getAllBoards(Request $request, BoardRepository $boardRepository)
     {
-        $boards = $boardRepository->findAllBoards();
+        $user = $this->getUser();
+
+        $boards = $boardRepository->findAllBoardsByUserId($user->getId());
 
         if (!$boards) {
             return $this->createNotFoundResponse();
@@ -51,7 +54,12 @@ class BoardController extends AbstractController
      */
     public function getSingleBoard(Request $request, BoardRepository $boardRepository)
     {
-        $board = $boardRepository->findBoardById($request->attributes->get('id'));
+        $user = $this->getUser();
+
+        $board = $boardRepository->findBoardById(
+            $request->attributes->get('id'),
+            $user->getId()
+        );
 
         if (!$board) {
             return $this->createNotFoundResponse();
@@ -72,8 +80,11 @@ class BoardController extends AbstractController
      */
     public function createBoard(Request $request, BoardCreator $boardCreator)
     {
+        $user = $this->getUser();
         $board = $this->deserialize($request->getContent(), Board::class, 'json');
-        $response = $boardCreator->create($board);
+
+        /** @var User $user */
+        $response = $boardCreator->create($board, $user);
 
         return $this->json($response, 200);
     }

@@ -21,9 +21,17 @@ class TaskRepository extends ServiceEntityRepository
         parent::__construct($registry, Task::class);
     }
 
-    public function findTaskById($id)
+    /**
+     * @param $taskId
+     * @param $userId
+     * @return Task
+     */
+    public function findTaskById($taskId, $userId)
     {
-        $task = $this->find($id);
+        $task = $this->findOneBy([
+            'id' => $taskId,
+            'user' => $userId,
+        ]);
 
         return $task;
     }
